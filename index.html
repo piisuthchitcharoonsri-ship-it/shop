@@ -1,208 +1,301 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ร้านขายของออนไลน์</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ร้านขายของ — Demo</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #000;
-      margin: 0;
-      padding: 0;
+    :root{
+      --bg:#0f172a; /* slate-900 */
+      --panel:#111827; /* gray-900 */
+      --card:#1f2937; /* gray-800 */
+      --muted:#94a3b8; /* slate-400 */
+      --text:#e5e7eb; /* gray-200 */
+      --brand:#22c55e; /* green-500 */
+      --brand-2:#06b6d4; /* cyan-500 */
+      --danger:#ef4444;
     }
-    header {
-      background: #000;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
-    .container {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .filters {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .filters input, .filters select {
-      padding: 8px;
-      border: 1px solid #000;
-      background: #fff;
-      color: #000;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .product {
-      border: 1px solid #000;
-      padding: 15px;
-      text-align: center;
-    }
-    .product img {
-      width: 100%;
-      max-height: 150px;
-      object-fit: cover;
-      margin-bottom: 10px;
-    }
-    .product button {
-      padding: 6px 12px;
-      border: 1px solid #000;
-      background: #000;
-      color: #fff;
-      cursor: pointer;
-    }
-    .cart {
-      position: fixed;
-      top: 0;
-      right: -350px;
-      width: 300px;
-      height: 100%;
-      background: #fff;
-      border-left: 2px solid #000;
-      box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-      padding: 20px;
-      transition: right 0.3s ease;
-      overflow-y: auto;
-    }
-    .cart.active {
-      right: 0;
-    }
-    .cart h2 {
-      margin-top: 0;
-    }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .cart button {
-      margin-top: 10px;
-      width: 100%;
-    }
-    .toggle-cart {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #000;
-      color: #fff;
-      padding: 10px 15px;
-      cursor: pointer;
-      border: none;
-    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(120deg,var(--bg),#0b1026);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    a{color:inherit}
+    .container{max-width:1200px;margin-inline:auto;padding:24px}
+    header{position:sticky;top:0;background:rgba(15,23,42,.7);backdrop-filter:blur(10px);z-index:10;border-bottom:1px solid #1f2937}
+    .nav{display:flex;align-items:center;gap:16px;padding:12px 24px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.3px}
+    .brand .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;color:white;font-weight:900}
+    .spacer{flex:1}
+    .btn{border:0;border-radius:14px;padding:10px 14px;background:#2a364d;color:var(--text);cursor:pointer;transition:.2s}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+    .btn.primary{background:linear-gradient(135deg,var(--brand-2),var(--brand))}
+    .btn.icon{display:flex;align-items:center;gap:8px}
+
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;margin-top:16px}
+    .hero-card{background:radial-gradient(1200px 400px at 10% 0%,rgba(6,182,212,.25),transparent),radial-gradient(900px 400px at 100% 30%,rgba(34,197,94,.2),transparent),var(--panel);border:1px solid #1f2937;border-radius:20px;padding:24px}
+    .hero h1{margin:0 0 8px 0;font-size:clamp(24px,3vw,44px)}
+    .hero p{margin:0;color:var(--muted)}
+
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .search{position:relative;flex:1;min-width:220px}
+    .search input{width:100%;padding:12px 16px 12px 44px;border-radius:14px;border:1px solid #334155;background:#0b1329;color:var(--text)}
+    .search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6}
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border:1px solid #334155;border-radius:999px;background:#0b1329;color:var(--text);cursor:pointer;font-size:14px}
+    .chip.active{background:linear-gradient(135deg,#0ea5e9,#22c55e);border-color:transparent}
+
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+    @media (max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}}
+    @media (max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:480px){.grid{grid-template-columns:1fr}}
+
+    .card{background:linear-gradient(180deg,#0b1329, #0a1022);border:1px solid #1f2937;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+    .thumb{aspect-ratio:16/11;background:#0a0f22;display:block}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .card-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+    .title{font-weight:600}
+    .price{font-size:18px}
+    .muted{color:var(--muted);font-size:14px}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qty button{width:28px;height:28px;border-radius:8px;border:1px solid #334155;background:#0b1329;color:var(--text);cursor:pointer}
+
+    /* Cart */
+    .cart-toggle{position:fixed;right:16px;bottom:16px;z-index:20}
+    .cart-panel{position:fixed;inset:0 0 0 auto;width:min(420px,100%);background:rgba(15,23,42,.96);border-left:1px solid #1f2937;transform:translateX(100%);transition:.25s ease;z-index:30;display:flex;flex-direction:column}
+    .cart-panel.open{transform:translateX(0)}
+    .cart-head{display:flex;align-items:center;gap:10px;padding:16px 16px;border-bottom:1px solid #1f2937}
+    .cart-items{padding:10px 14px;overflow:auto;flex:1}
+    .cart-item{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px dashed #1f2937}
+    .cart-item img{width:56px;height:56px;object-fit:cover;border-radius:10px}
+    .cart-foot{border-top:1px solid #1f2937;padding:14px;display:grid;gap:10px}
+    .row{display:flex;justify-content:space-between}
+    .total{font-size:20px;font-weight:700}
+    .empty{opacity:.7;text-align:center;padding:18px}
+    .danger{color:var(--danger)}
+
+    footer{margin:40px 0 20px;color:#8392a9;text-align:center}
+    .linklike{cursor:pointer;text-decoration:underline}
   </style>
 </head>
 <body>
   <header>
-    <h1>ร้านขายของออนไลน์</h1>
+    <div class="nav container">
+      <div class="brand"><div class="logo">฿</div> ร้านขายของ</div>
+      <div class="spacer"></div>
+      <button class="btn icon" id="openCartBtn" aria-label="เปิดตะกร้า">🛒 ตะกร้า (<span id="cartCount">0</span>)</button>
+    </div>
   </header>
 
-  <button class="toggle-cart">🛒 ตะกร้า</button>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <h1>ยินดีต้อนรับสู่ร้านของเรา</h1>
+        <p>เลือกดูสินค้า ค้นหา และหยิบใส่ตะกร้าได้เลย ระบบนี้เป็นเดโมฝั่งลูกค้า (HTML/CSS/JS ล้วน ๆ)</p>
+        <div class="controls" style="margin-top:16px">
+          <div class="search">
+            <span class="icon">🔎</span>
+            <input id="searchInput" placeholder="ค้นหาสินค้า… (เช่น เสื้อ, หมวก, แก้ว)" />
+          </div>
+          <div class="chips" id="categoryChips"></div>
+          <button class="btn" id="resetFilters">ล้างตัวกรอง</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3 style="margin:0 0 6px 0">ไฮไลท์</h3>
+        <p class="muted">• กรองตามหมวดหมู่ • ค้นหา • เพิ่ม/ลดจำนวน • บันทึกตะกร้าด้วย LocalStorage • ยอดรวมอัตโนมัติ</p>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn primary" id="viewFeatured">ดูสินค้าแนะนำ</button>
+          <button class="btn" id="viewAll">ดูสินค้าทั้งหมด</button>
+        </div>
+      </div>
+    </section>
 
-  <div class="container">
-    <div class="filters">
-      <input type="text" id="search" placeholder="ค้นหาสินค้า...">
-      <select id="category">
-        <option value="all">ทุกหมวดหมู่</option>
-        <option value="electronics">อิเล็กทรอนิกส์</option>
-        <option value="clothes">เสื้อผ้า</option>
-        <option value="books">หนังสือ</option>
-      </select>
-    </div>
+    <section>
+      <div class="grid" id="productGrid"></div>
+    </section>
 
-    <div class="products" id="products"></div>
-  </div>
+    <button class="btn primary cart-toggle" id="fabCart">🛒 เปิดตะกร้า</button>
 
-  <div class="cart" id="cart">
-    <h2>ตะกร้าสินค้า</h2>
-    <div id="cart-items"></div>
-    <h3>รวม: <span id="total">0</span> บาท</h3>
-    <button onclick="checkout()">ชำระเงิน (เดโม)</button>
-  </div>
+    <aside class="cart-panel" id="cartPanel" aria-hidden="true">
+      <div class="cart-head">
+        <strong style="font-size:18px">ตะกร้าสินค้า</strong>
+        <div class="spacer"></div>
+        <button class="btn" id="closeCartBtn">ปิด</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-foot">
+        <div class="row"><span>ยอดรวม</span><span class="total" id="cartTotal">฿0</span></div>
+        <button class="btn primary" id="checkoutBtn">ชำระเงิน (เดโม)</button>
+        <button class="btn" id="clearCartBtn"><span class="danger">ล้างตะกร้า</span></button>
+        <small class="muted">* เดโม: ปุ่มชำระเงินยังไม่เชื่อมต่อเกตเวย์จริง</small>
+      </div>
+    </aside>
+  </main>
+
+  <footer>© <span id="year"></span> ร้านขายของเดโม • สร้างด้วย HTML/CSS/JS</footer>
 
   <script>
-    const products = [
-      { id: 1, name: "หูฟัง", category: "electronics", price: 500, img: "https://via.placeholder.com/200" },
-      { id: 2, name: "เสื้อยืด", category: "clothes", price: 300, img: "https://via.placeholder.com/200" },
-      { id: 3, name: "หนังสือธุรกิจ", category: "books", price: 250, img: "https://via.placeholder.com/200" },
-      { id: 4, name: "เพาเวอร์แบงค์", category: "electronics", price: 1200, img: "https://via.placeholder.com/200" }
+    const PRODUCTS = [
+      {id:'p1', name:'เสื้อยืดสีดำ', price:250, category:'เสื้อผ้า', featured:true, img:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p2', name:'หมวกแก๊ป', price:180, category:'เสื้อผ้า', featured:false, img:'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p3', name:'แก้วน้ำสเตนเลส', price:320, category:'ไลฟ์สไตล์', featured:true, img:'https://images.unsplash.com/photo-1502741509793-2bf0d015f77f?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p4', name:'สมุดโน้ต', price:95, category:'เครื่องเขียน', featured:false, img:'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p5', name:'เสื้อฮู้ด', price:690, category:'เสื้อผ้า', featured:false, img:'https://images.unsplash.com/photo-1548883354-94bcfe321cfc?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p6', name:'ขวดน้ำพกพา', price:150, category:'ไลฟ์สไตล์', featured:false, img:'https://images.unsplash.com/photo-1526406915894-6c27f1d4820f?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p7', name:'ปากกาหมึกเจล', price:35, category:'เครื่องเขียน', featured:false, img:'https://images.unsplash.com/photo-1516544821473-fcf7c3eb26a6?q=80&w=1200&auto=format&fit=crop'},
+      {id:'p8', name:'เทียนหอม', price:220, category:'ไลฟ์สไตล์', featured:true, img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop'}
     ];
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const CATEGORIES = ['ทั้งหมด', ...Array.from(new Set(PRODUCTS.map(p=>p.category)))];
 
-    const productContainer = document.getElementById("products");
-    const cartContainer = document.getElementById("cart-items");
-    const totalElement = document.getElementById("total");
-    const cartElement = document.getElementById("cart");
+    const state = {
+      search: '',
+      category: 'ทั้งหมด',
+      featuredOnly: false,
+      cart: loadCart()
+    };
 
-    function renderProducts() {
-      productContainer.innerHTML = "";
-      const search = document.getElementById("search").value.toLowerCase();
-      const category = document.getElementById("category").value;
+    const els = {
+      grid: document.getElementById('productGrid'),
+      chips: document.getElementById('categoryChips'),
+      search: document.getElementById('searchInput'),
+      reset: document.getElementById('resetFilters'),
+      count: document.getElementById('cartCount'),
+      panel: document.getElementById('cartPanel'),
+      items: document.getElementById('cartItems'),
+      total: document.getElementById('cartTotal'),
+      openCartBtn: document.getElementById('openCartBtn'),
+      closeCartBtn: document.getElementById('closeCartBtn'),
+      fabCart: document.getElementById('fabCart'),
+      viewFeatured: document.getElementById('viewFeatured'),
+      viewAll: document.getElementById('viewAll'),
+    };
 
-      const filtered = products.filter(p => 
-        (category === "all" || p.category === category) &&
-        p.name.toLowerCase().includes(search)
-      );
+    // UI Init
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-      filtered.forEach(p => {
-        const div = document.createElement("div");
-        div.classList.add("product");
-        div.innerHTML = `
-          <img src="${p.img}" alt="${p.name}">
-          <h3>${p.name}</h3>
-          <p>${p.price} บาท</p>
-          <button onclick="addToCart(${p.id})">เพิ่มลงตะกร้า</button>
-        `;
-        productContainer.appendChild(div);
-      });
+    // Build category chips
+    function renderChips(){
+      els.chips.innerHTML='';
+      CATEGORIES.forEach(cat=>{
+        const b=document.createElement('button');
+        b.className='chip'+(state.category===cat?' active':'');
+        b.textContent=cat;
+        b.onclick=()=>{state.category=cat;state.featuredOnly=false;render()};
+        els.chips.appendChild(b);
+      })
     }
 
-    function renderCart() {
-      cartContainer.innerHTML = "";
-      let total = 0;
-      cart.forEach(item => {
-        total += item.price * item.qty;
-        const div = document.createElement("div");
-        div.classList.add("cart-item");
-        div.innerHTML = `
-          <span>${item.name} x ${item.qty}</span>
-          <span>${item.price * item.qty} บาท</span>
-        `;
-        cartContainer.appendChild(div);
-      });
-      totalElement.textContent = total;
-      localStorage.setItem("cart", JSON.stringify(cart));
+    function formatTHB(x){
+      return x.toLocaleString('th-TH',{style:'currency',currency:'THB',maximumFractionDigits:0});
     }
 
-    function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      const existing = cart.find(i => i.id === id);
-      if (existing) {
-        existing.qty++;
-      } else {
-        cart.push({ ...product, qty: 1 });
+    function renderProducts(){
+      const q=state.search.trim().toLowerCase();
+      const filtered = PRODUCTS.filter(p=>{
+        const matchCat = state.category==='ทั้งหมด' || p.category===state.category;
+        const matchQ = !q || p.name.toLowerCase().includes(q);
+        const matchFeat = !state.featuredOnly || p.featured;
+        return matchCat && matchQ && matchFeat;
+      });
+      els.grid.innerHTML = filtered.map(p=>`\n        <article class="card">
+          <a class="thumb" href="#" aria-label="ดู ${p.name}"><img src="${p.img}" alt="${p.name}" loading="lazy"></a>
+          <div class="card-body">
+            <div class="title">${p.name}</div>
+            <div class="muted">หมวดหมู่: ${p.category}</div>
+            <div class="price">${formatTHB(p.price)}</div>
+            <div class="qty">
+              <button aria-label="ลด" onclick="updateQty('${p.id}',-1)">–</button>
+              <span id="q_${p.id}">${state.cart[p.id]?.qty||0}</span>
+              <button aria-label="เพิ่ม" onclick="updateQty('${p.id}',1)">+</button>
+              <div class="spacer"></div>
+              <button class="btn" onclick="addToCart('${p.id}')">หยิบใส่ตะกร้า</button>
+            </div>
+          </div>
+        </article>`).join('');
+    }
+
+    function saveCart(){
+      localStorage.setItem('demo_cart', JSON.stringify(state.cart));
+    }
+    function loadCart(){
+      try{ return JSON.parse(localStorage.getItem('demo_cart'))||{} }catch(e){ return {} }
+    }
+
+    function calcTotal(){
+      let sum=0,count=0;
+      Object.values(state.cart).forEach(ci=>{ sum += ci.qty * ci.price; count += ci.qty });
+      els.total.textContent = formatTHB(sum);
+      els.count.textContent = count;
+      return {sum,count};
+    }
+
+    function renderCart(){
+      const ids = Object.keys(state.cart);
+      if(ids.length===0){
+        els.items.innerHTML = `<div class="empty">ตะกร้าว่างอยู่ ลองเพิ่มสินค้าดูสิ 😊</div>`;
+        calcTotal();
+        return;
       }
+      els.items.innerHTML = ids.map(id=>{
+        const ci=state.cart[id];
+        return `
+          <div class="cart-item">
+            <img src="${ci.img}" alt="${ci.name}">
+            <div>
+              <div style="font-weight:600">${ci.name}</div>
+              <div class="muted">${formatTHB(ci.price)} × ${ci.qty}</div>
+              <div class="qty" style="margin-top:6px">
+                <button onclick="updateQty('${id}',-1)">–</button>
+                <span id="cq_${id}">${ci.qty}</span>
+                <button onclick="updateQty('${id}',1)">+</button>
+                <span class="linklike" style="margin-left:12px" onclick="removeItem('${id}')">ลบ</span>
+              </div>
+            </div>
+            <div style="font-weight:700">${formatTHB(ci.qty*ci.price)}</div>
+          </div>`
+      }).join('');
+      calcTotal();
+    }
+
+    // Cart ops (expose to window for inline handlers)
+    window.addToCart = function(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(!state.cart[id]) state.cart[id] = {id, name:p.name, price:p.price, img:p.img, qty:0};
+      state.cart[id].qty++;
+      saveCart();
+      document.getElementById('q_'+id)?.replaceWith(document.getElementById('q_'+id).cloneNode(true)); // fix Safari text node
+      document.getElementById('q_'+id).textContent = state.cart[id].qty;
       renderCart();
     }
-
-    function checkout() {
-      alert("นี่คือเดโมการชำระเงิน (ยังไม่เชื่อมต่อระบบจริง)");
+    window.updateQty = function(id,delta){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(!p) return;
+      if(!state.cart[id]) state.cart[id] = {id, name:p.name, price:p.price, img:p.img, qty:0};
+      state.cart[id].qty = Math.max(0,(state.cart[id].qty||0)+delta);
+      if(state.cart[id].qty===0) delete state.cart[id];
+      saveCart();
+      const q1=document.getElementById('q_'+id); if(q1) q1.textContent = state.cart[id]?.qty||0;
+      const q2=document.getElementById('cq_'+id); if(q2) q2.textContent = state.cart[id]?.qty||0;
+      renderCart();
     }
+    window.removeItem = function(id){ delete state.cart[id]; saveCart(); render(); }
 
-    document.getElementById("search").addEventListener("input", renderProducts);
-    document.getElementById("category").addEventListener("change", renderProducts);
-    document.querySelector(".toggle-cart").addEventListener("click", () => {
-      cartElement.classList.toggle("active");
-    });
+    // Filters & events
+    els.search.addEventListener('input', e=>{state.search=e.target.value; renderProducts();});
+    els.reset.addEventListener('click', ()=>{state.search=''; els.search.value=''; state.category='ทั้งหมด'; state.featuredOnly=false; render()});
+    els.viewFeatured.addEventListener('click', ()=>{state.featuredOnly=true; render()});
+    els.viewAll.addEventListener('click', ()=>{state.featuredOnly=false; state.category='ทั้งหมด'; render()});
 
-    renderProducts();
-    renderCart();
+    // Cart panel toggles
+    function openCart(){ els.panel.classList.add('open'); els.panel.setAttribute('aria-hidden','false'); }
+    function closeCart(){ els.panel.classList.remove('open'); els.panel.setAttribute('aria-hidden','true'); }
+    els.openCartBtn.addEventListener('click', openCart);
+    els.fabCart.addEventListener('click', openCart);
+    document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeCart(); });
+
+    function render(){ renderChips(); renderProducts(); renderCart(); }
+    render();
   </script>
 </body>
 </html>
